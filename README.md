@@ -1,2 +1,2 @@
-# BCAcademicAdvisorBack
+# BCAcademicAdvisorAPI
 BC Academic Advisor Backend
