@@ -1,6 +1,6 @@
 
 # NOTE: update this with your service name
-service: bcadmin-api
+service: bcadmin-api-test
 
 # Create an optimized package for our functions 
 package:
@@ -10,6 +10,11 @@ plugins:
   - serverless-bundle # Package our functions with Webpack
   - serverless-offline
   - serverless-dotenv-plugin # Load .env as environment variables
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  tableName: ${self:custom.stage}-bcadmin
+  tableTwo: ${self:custom.stage}-tableTwo
 
 provider:
   name: aws
@@ -21,8 +26,10 @@ provider:
   # the following line. Also, make sure to not
   # commit your .env.
   #
- environment: 
-    tableName: bcadmin-test
+  
+  environment: 
+    tableName: ${self:custom.tableName}
+    # stripeSecretkey: ${env:STRIPE_SECRET_KEY}
 
   iamRoleStatements:
     - Effect: Allow
@@ -34,7 +41,10 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
-      Resource: "arn:aws:dynamodb:us-west-2:*:*"
+      # Restrict to specific table
+      Resource:
+        - "Fn::GetAtt": [bcadmin, Arn]
+      # Resource: "arn:aws:dynamodb:us-west-2:*:*"
 
 functions:
   create:
@@ -77,3 +87,10 @@ functions:
           method: put
           cors: true
           authorizer: aws_iam
+
+resources:
+  - ${file(resources/api-gateway-errors.yml)}
+  - ${file(resources/dynamodb-table.yml)}
+  - ${file(resources/s3-bucket.yml)}
+  - ${file(resources/cognito-user-pool.yml)}
+  - ${file(resources/cognito-identity-pool.yml)}
