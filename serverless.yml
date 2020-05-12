@@ -13,8 +13,10 @@ plugins:
 
 custom:
   stage: ${opt:stage, self:provider.stage}
-  tableName: ${self:custom.stage}-bcadmin
+  tableName: bcadmin-${self:custom.stage}
   tableTwo: ${self:custom.stage}-tableTwo
+  bcadminSlug: bcadmin-slug
+  bcadminClasses: bcadmin-classes
 
 provider:
   name: aws
@@ -25,11 +27,11 @@ provider:
   # rename env.example to .env and uncomment
   # the following line. Also, make sure to not
   # commit your .env.
-  #
   
   environment: 
     tableName: ${self:custom.tableName}
-    # stripeSecretkey: ${env:STRIPE_SECRET_KEY}
+    bcadminSlug: ${self:custom.bcadminSlug}
+    bcadminClasses: ${self:custom.bcadminClasses}
 
   iamRoleStatements:
     - Effect: Allow
@@ -58,6 +60,22 @@ functions:
   get:
     handler: get.main
     events: 
+      - http:
+          path: quarter/{id}
+          method: get
+          cors: true
+          authorizer: aws_iam
+  getSlugList:
+    handler: getSlugList.main
+    events:
+      - http:
+          path: quarter/{id}
+          method: get
+          cors: true
+          authorizer: aws_iam
+  getClassList:
+    handler: getClassList.main
+    events:
       - http:
           path: quarter/{id}
           method: get
