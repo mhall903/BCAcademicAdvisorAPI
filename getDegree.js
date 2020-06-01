@@ -5,10 +5,10 @@ export async function main(event, context) {
     console.log(event);
 
     const params = {
-        TableName: process.env.bcadminClasses,
-        KeyConditionExpression: "slug = :slug",
+        TableName: process.env.bcadminDegree,
+        KeyConditionExpression: "degree = :degree",
         ExpressionAttributeValues: {
-            ":slug": event.pathParameters.slug
+            ":degree": event.pathParameters.degree
         }
     };
 

@@ -44,3 +44,14 @@ Resources:
         - AttributeName: id
           KeyType: RANGE
       BillingMode: PAY_PER_REQUEST
+  bcadminDegree:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: bcadmin-degree
+      AttributeDefinitions:
+        - AttributeName: degree
+          AttributeType: S
+      KeySchema:
+        - AttributeName: degree
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST

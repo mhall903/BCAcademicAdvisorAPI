@@ -1,0 +1,12 @@
+serverless invoke local --function create --path mocks/create-event.json --profile bcadmin
+serverless invoke local --function get --path mocks/get-event.json --profile bcadmin
+serverless invoke local --function getSlugList --path mocks/subjects.json --profile bcadmin
+serverless invoke local --function getClassList --path mocks/classes.json --profile bcadmin
+serverless invoke local --function list --path mocks/list-event.json --profile bcadmin
+serverless invoke local --function delete --path mocks/delete-event.json --profile bcadmin
+serverless invoke local --function update --path mocks/update-event.json --profile bcadmin
+serverless invoke local --function getDegree --path mocks/get-degree.json --profile bcadmin
+
+serverless deploy --aws-profile bcadmin
+serverless deploy function -f getClassList --aws-profile bcadmin
+serverless deploy function -f getSlugList --aws-profile bcadmin

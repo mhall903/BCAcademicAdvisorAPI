@@ -15,6 +15,7 @@ custom:
   tableName: bcadmin-${self:custom.stage}
   bcadminSlug: bcadmin-slug
   bcadminClasses: bcadmin-classes
+  bcadminDegree: bcadmin-degree
 
 provider:
   name: aws
@@ -32,6 +33,7 @@ provider:
     tableName: ${self:custom.tableName}
     bcadminSlug: ${self:custom.bcadminSlug}
     bcadminClasses: ${self:custom.bcadminClasses}
+    bcadminDegree: ${self:custom.bcadminDegree}
     # stripeSecretkey: ${env:STRIPE_SECRET_KEY}
 
   iamRoleStatements:
@@ -74,7 +76,20 @@ provider:
       # the specific table for the stage
       Resource:
         - "Fn::GetAtt": [ bcadminClasses, Arn ]
-
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      # Restrict our IAM role permissions to
+      # the specific table for the stage
+      Resource:
+        - "Fn::GetAtt": [ bcadminDegree, Arn ]
+  
 functions:
   create:
     handler: create.main
@@ -96,7 +111,7 @@ functions:
     handler: getSlugList.main
     events:
       - http:
-          path: quarter/{id}
+          path: slug
           method: get
           cors: true
           authorizer: aws_iam
@@ -104,7 +119,15 @@ functions:
     handler: getClassList.main
     events:
       - http:
-          path: quarter/{id}
+          path: class/{slug}
+          method: get
+          cors: true
+          authorizer: aws_iam
+  getDegree:
+    handler: getDegree.main
+    events:
+      - http:
+          path: degree/{degree}
           method: get
           cors: true
           authorizer: aws_iam
